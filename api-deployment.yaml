@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: php-api
+  template:
+    metadata:
+      labels:
+        app: php-api
+    spec:
+      containers:
+      - name: php-api
+        image: asia-south2-docker.pkg.dev/kubernetes-nagp-ankit/php-api/php-api:latest
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: MYSQL_DATABASE
+        - name: MYSQL_EMP_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: MYSQL_EMP_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-secret
+              key: mysql-password
+        ports:
+        - containerPort: 80
